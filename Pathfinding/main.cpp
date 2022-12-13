@@ -2,7 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <math.h>
-#include <array>
+
+#include "Graph.h"
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {
@@ -13,35 +14,59 @@ void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string te
     startText.setFillColor(color);
 }
 
-void GenerateSquareGrid(sf::RenderWindow& window, int xSize, int ySize) {
+void GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, std::vector<sf::RectangleShape> &squareList) {
 
-    std::vector<sf::RectangleShape> squareList;
-    squareList.reserve(xSize * ySize);
+    colNumber = abs(colNumber);
+    rowNumber = abs(rowNumber);
+
+    Graph graph;
+   
+    /*std::vector<sf::RectangleShape> colList;
+    colList.reserve(colNumber);
+    std::vector<std::vector<sf::RectangleShape>> rowList;
+    rowList.reserve(rowNumber);*/
+
+    squareList.reserve(colNumber * rowNumber);
+
+    //rowList.reserve(rowNumber);
 
     sf::RectangleShape square;
 
-    int squareSizeX = floor(window.getSize().x / xSize);
-    int squareSizeY = floor((window.getSize().y - 100) / ySize);
+    int squareSizeX = floor(window.getSize().x / colNumber);
+    int squareSizeY = floor((window.getSize().y - 100) / rowNumber);
 
     square.setSize(sf::Vector2f(squareSizeX, squareSizeY));
     square.setOutlineColor(sf::Color::Black);
     square.setOutlineThickness(-2);
     
     
-    for (int y = 0; y < ySize; y++)
+    /*for (int y = 0; y < rowNumber; y++)
     {
-        for (int x = 0; x <= xSize; x++) {
+        colList.clear();
+        for (int x = 0; x < colNumber; x++) {
             square.setPosition(squareSizeX * x, squareSizeY * y);
-            squareList.push_back(square);
+            colList.push_back(square);
             window.draw(square);
         }
-    }
+        rowList.push_back(colList);
+    }*/
+
+    int nodeIncrementer = 0;
+
+    for (int y = 0; y < rowNumber; y++)
+   {
+       for (int x = 0; x < colNumber; x++) {
+           square.setPosition(squareSizeX * x, squareSizeY * y);
+           squareList.push_back(square);
+           graph.AddNode(nodeIncrementer++);
+       }
+   }
 }
 
 int main()
 {
 #pragma region Declarations
-    sf::RenderWindow window(sf::VideoMode(1000, 800), "OUR PROJECT");
+    sf::RenderWindow window(sf::VideoMode(1800, 950), "OUR PROJECT");
     sf::Font font;
     if (!font.loadFromFile("assets/arial.ttf"))
     {
@@ -95,8 +120,13 @@ int main()
 
     sf::Text refreshText;
     SetupText(refreshText, font, 685, buttonY + 10, "Refresh", 20, sf::Color::White);
+
+    std::vector<sf::RectangleShape> squareList;
     
 #pragma endregion Declarations
+
+    //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
+    GenerateSquareGrid(window, 80, 80, squareList);
 
     // on fait tourner le programme tant que la fenêtre n'a pas été fermée
     while (window.isOpen())
@@ -107,6 +137,7 @@ int main()
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
+                //TODO: Add Input Handler pcq la ouala c'est degeux
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Start";
@@ -127,20 +158,21 @@ int main()
                 {
                     std::cout << "Refresh";
                 }
+                for (int i = 0; i < squareList.capacity(); i++) {
+                    if (squareList[i].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                    {
+                        std::cout << i<< std::endl;
+                    }
+                }
             }
             if (event.type == sf::Event::Closed)
                 window.close();
         }
         
         // effacement de la fenêtre en noir
-        window.clear(sf::Color::Black);
 
-       
-        sf::RectangleShape rectangle;
-        rectangle.setSize(sf::Vector2f(50, 50));
-        rectangle.setOutlineColor(sf::Color::Red);
-        rectangle.setOutlineThickness(-1);
-        rectangle.setPosition(0, 0);
+        //TODO: We don't have to recolor each loop but only on event.
+        window.clear(sf::Color::Black);
 
         // c'est ici qu'on dessine tout
         // window.draw(...);
@@ -154,9 +186,11 @@ int main()
         window.draw(wallText);
         window.draw(computeText);
         window.draw(refreshText);
-        window.draw(rectangle);
 
-        GenerateSquareGrid(window, 15, 15);
+        for (sf::RectangleShape square : squareList) {
+            window.draw(square);
+        }
+
 
         // fin de la frame courante, affichage de tout ce qu'on a dessiné
         window.display();
