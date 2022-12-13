@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "Graph.h"
+#include "EditState.h"
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {
@@ -34,7 +35,6 @@ void GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, 
 
     int squareSizeX = floor(window.getSize().x / colNumber);
     int squareSizeY = floor((window.getSize().y - 100) / rowNumber);
-
     square.setSize(sf::Vector2f(squareSizeX, squareSizeY));
     square.setOutlineColor(sf::Color::Black);
     square.setOutlineThickness(-2);
@@ -126,11 +126,12 @@ int main()
 #pragma endregion Declarations
 
     //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
-    GenerateSquareGrid(window, 80, 80, squareList);
-
+    GenerateSquareGrid(window, 20, 20, squareList);
+    EditState state = EditState::Default;
     // on fait tourner le programme tant que la fenêtre n'a pas été fermée
     while (window.isOpen())
     {
+        std::cout << state << std::endl;
         // on traite tous les évènements de la fenêtre qui ont été générés depuis la dernière itération de la boucle
         sf::Event event;
         while (window.pollEvent(event))
@@ -141,27 +142,43 @@ int main()
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Start";
+                    state = Start;
+
                 }
                 if (rectangle2.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "End";
+                    state = End;
                 }
                 if (rectangle3.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Wall";
+                    state = EditState::Wall;
                 }
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Compute";
+                    state = EditState::Default;
                 }
                 if (rectangle5.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Refresh";
+                    state = EditState::Default;
                 }
                 for (int i = 0; i < squareList.capacity(); i++) {
                     if (squareList[i].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                     {
-                        std::cout << i<< std::endl;
+                        //TODO: Check les types des nodes ou des rect jsp comment pour ne pas avoir plusieurs start etc.
+                        if (state == EditState::Start) {
+                            squareList[i].setFillColor(sf::Color::Green);
+                        }else if (state == EditState::End) {
+                            squareList[i].setFillColor(sf::Color::Red);
+                        }else if (state == EditState::Wall) {
+                            squareList[i].setFillColor(sf::Color::Yellow);
+                        }
+                        else {
+                            squareList[i].setFillColor(sf::Color::White);
+                        }
                     }
                 }
             }
