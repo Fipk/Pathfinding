@@ -3,8 +3,8 @@
 #include <string>
 #include <math.h>
 
-#include "Graph.h"
-#include "EditState.h"
+#include "header/Graph.h"
+#include "header/EditState.h"
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {
