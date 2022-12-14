@@ -150,6 +150,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\PathFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -157,7 +158,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="header\EditState.h" />
     <ClInclude Include="header\Graph.h" />
-    <ClInclude Include="main.h" />
+    <ClInclude Include="header\PathFinder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
