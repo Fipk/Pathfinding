@@ -53,8 +53,43 @@ std::vector<std::vector<sf::RectangleShape>> GenerateSquareGrid(sf::RenderWindow
     return rowList;
 }
 
-void GenerateEdgesOfGraph(Graph* graph, std::vector<std::vector<sf::RectangleShape>>& squareList, int colNumber, int rowNumber) {
+void GenerateEdgesOfGraph(Graph* graph, int colNumber, int rowNumber) {
     
+    int nbOfWall = 0;
+
+    for (int y = 0; y < rowNumber; y++) {
+        for (int x = 0; x < colNumber; x++) {
+
+            graph->ClearEdge(x, y);
+
+            if (graph->nodes[y][x]->isWall == false) {
+
+                //INVERSER X ET Y POUR PREND LE NODE COLONNE 3 LIGNE 5 IL FAUT ECRIRE [y = 5][x = 3]
+                if (x > 0 && graph->nodes[y][x - 1]->isWall == false) {
+                    graph->AddEdge(x, y, x - 1, y); 
+                }
+                if (y > 0 && graph->nodes[y - 1][x]->isWall == false) { 
+                    graph->AddEdge(x, y, x, y - 1); 
+                }
+
+                if (x < colNumber - 1 && graph->nodes[y][x + 1]->isWall == false) { 
+                    graph->AddEdge(x, y, x + 1, y); 
+
+                }
+                if (y < rowNumber - 1 && graph->nodes[y + 1][x]->isWall == false) { 
+                    graph->AddEdge(x, y, x, y + 1); 
+
+                }
+
+            }
+            else
+            {
+                nbOfWall++;
+            }
+        }
+    }
+
+    std::cout << "Edges Computed " << nbOfWall << "Wall" << std::endl;
 }
 
 int main()
@@ -127,7 +162,6 @@ int main()
     int rowNumber = 20;
 
     std::vector<std::vector<sf::RectangleShape>> squareList = GenerateSquareGrid(window, colNumber, rowNumber, &graph);
-    //GenerateNodes(&graph, &squareList);
 
     std::vector<sf::RectangleShape*> wallList;
 
@@ -188,6 +222,7 @@ int main()
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Compute";
+                    GenerateEdgesOfGraph(&graph, colNumber, rowNumber);
                 }
                 if (rectangle5.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {

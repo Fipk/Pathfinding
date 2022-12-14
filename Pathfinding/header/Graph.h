@@ -21,21 +21,8 @@ public:
 
 	void AddNode(int x, int y, std::vector<Node*>* nodeList);
 
+	void ClearEdge(int x, int y);
 	void AddEdge(int xFrom, int yFrom, int xTo, int yTo);
-
-    ////Afficher le graphe
-    //void print() const {
-    //    for (const auto& entry : nodes) {
-    //        const Node* node = entry.second;
-    //        std::cout << node->value << ": [";
-
-    //        for (const Node* neighbor : node->neighbors) {
-    //            std::cout << neighbor->value << " ";
-    //        }
-
-    //        std::cout << "]" << std::endl;
-    //    }
-    //}
 
 	//Do it recursivly later
 	~Graph();
