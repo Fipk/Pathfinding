@@ -7,6 +7,7 @@
 struct Node
 {
 	int value;
+    sf::RectangleShape* pSquare;
 	std::vector<Node*> neighbors;
 };
 
@@ -15,7 +16,7 @@ class Graph
 public:
 	Graph();
 
-	void AddNode(int value);
+	void AddNode(int value, sf::RectangleShape* pSquare);
 
 	void AddEdge(int from, int to);
 

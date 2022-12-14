@@ -2,8 +2,8 @@
 
 Graph::Graph(){};
 
-void Graph::AddNode(int value) {
-	Node* node = new Node{ value };
+void Graph::AddNode(int value, sf::RectangleShape* pSquare) {
+	Node* node = new Node{ value , pSquare};
 	nodes[value] = node;
 } 
 

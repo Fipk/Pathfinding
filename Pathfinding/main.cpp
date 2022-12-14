@@ -58,7 +58,7 @@ void GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, 
        for (int x = 0; x < colNumber; x++) {
            square.setPosition(squareSizeX * x, squareSizeY * y);
            squareList.push_back(square);
-           graph.AddNode(nodeIncrementer++);
+           graph.AddNode(nodeIncrementer++, &square);
        }
    }
 }
