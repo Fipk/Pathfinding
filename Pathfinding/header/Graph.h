@@ -6,8 +6,11 @@
 
 struct Node
 {
-	int value;
-    sf::RectangleShape* pSquare;
+	int x;
+    int y;
+    bool isWall ;
+    Node* parent;
+    int Score;
 	std::vector<Node*> neighbors;
 };
 
@@ -16,27 +19,26 @@ class Graph
 public:
 	Graph();
 
-	void AddNode(int value, sf::RectangleShape* pSquare);
+	void AddNode(int x, int y, std::vector<Node*>* nodeList);
 
-	void AddEdge(int from, int to);
+	void AddEdge(int xFrom, int yFrom, int xTo, int yTo);
 
-    //Afficher le graphe
-    void print() const {
-        for (const auto& entry : nodes) {
-            const Node* node = entry.second;
-            std::cout << node->value << ": [";
+    ////Afficher le graphe
+    //void print() const {
+    //    for (const auto& entry : nodes) {
+    //        const Node* node = entry.second;
+    //        std::cout << node->value << ": [";
 
-            for (const Node* neighbor : node->neighbors) {
-                std::cout << neighbor->value << " ";
-            }
+    //        for (const Node* neighbor : node->neighbors) {
+    //            std::cout << neighbor->value << " ";
+    //        }
 
-            std::cout << "]" << std::endl;
-        }
-    }
+    //        std::cout << "]" << std::endl;
+    //    }
+    //}
 
 	//Do it recursivly later
 	~Graph();
 
-private:
-	std::unordered_map<int, Node*> nodes;
+	std::vector<std::vector<Node*>> nodes;
 };

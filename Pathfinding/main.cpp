@@ -5,6 +5,7 @@
 
 #include "header/Graph.h"
 #include "header/EditState.h"
+#include "main.h"
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {
@@ -15,21 +16,15 @@ void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string te
     startText.setFillColor(color);
 }
 
-void GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, std::vector<sf::RectangleShape> &squareList) {
+std::vector<std::vector<sf::RectangleShape>> GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, Graph* graph) {
 
     colNumber = abs(colNumber);
     rowNumber = abs(rowNumber);
 
-    Graph graph;
-   
-    /*std::vector<sf::RectangleShape> colList;
+    std::vector<sf::RectangleShape> colList;
     colList.reserve(colNumber);
     std::vector<std::vector<sf::RectangleShape>> rowList;
-    rowList.reserve(rowNumber);*/
-
-    squareList.reserve(colNumber * rowNumber);
-
-    //rowList.reserve(rowNumber);
+    rowList.reserve(rowNumber);
 
     sf::RectangleShape square;
 
@@ -38,30 +33,28 @@ void GenerateSquareGrid(sf::RenderWindow& window, int colNumber, int rowNumber, 
     square.setSize(sf::Vector2f(squareSizeX, squareSizeY));
     square.setOutlineColor(sf::Color::Black);
     square.setOutlineThickness(-2);
-    
-    
-    /*for (int y = 0; y < rowNumber; y++)
+
+    std::vector<Node*> colNodeList;
+
+    for (int y = 0; y < rowNumber; y++)
     {
         colList.clear();
+        colNodeList.clear();
         for (int x = 0; x < colNumber; x++) {
             square.setPosition(squareSizeX * x, squareSizeY * y);
             colList.push_back(square);
             window.draw(square);
+            graph->AddNode(x, y, &colNodeList);
         }
         rowList.push_back(colList);
-    }*/
+        graph->nodes.push_back(colNodeList);
+    }
 
-    int nodeIncrementer = 0;
+    return rowList;
+}
 
-    for (int y = 0; y < rowNumber; y++)
-   {
-       for (int x = 0; x < colNumber; x++) {
-           square.setPosition(squareSizeX * x, squareSizeY * y);
-           squareList.push_back(square);
-           graph.AddNode(nodeIncrementer, &squareList[nodeIncrementer]);
-           nodeIncrementer++;
-       }
-   }
+void GenerateEdgesOfGraph(Graph* graph, std::vector<std::vector<sf::RectangleShape>>& squareList, int colNumber, int rowNumber) {
+    
 }
 
 int main()
@@ -122,14 +115,23 @@ int main()
     sf::Text refreshText;
     SetupText(refreshText, font, 685, buttonY + 10, "Refresh", 20, sf::Color::White);
 
-    std::vector<sf::RectangleShape> squareList;
+    //std::vector<sf::RectangleShape> squareList;
+
+
+    Graph graph;
     
 #pragma endregion Declarations
 
     //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
-    GenerateSquareGrid(window, 20, 20, squareList);
+    int colNumber = 20;
+    int rowNumber = 20;
+
+    std::vector<std::vector<sf::RectangleShape>> squareList = GenerateSquareGrid(window, colNumber, rowNumber, &graph);
+    //GenerateNodes(&graph, &squareList);
+
+    std::vector<sf::RectangleShape*> wallList;
+
     EditState state = EditState::Default;
-    
     sf::Text stateText;
 
     sf::RectangleShape* pStartSquare = nullptr;
@@ -150,18 +152,29 @@ int main()
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
 
-                    std::cout << "Start";
-                    state = Start;
+                    if (state != EditState::Start)
+                    {
+                        state = EditState::Start;
+                    }
+                    else
+                    {
+                        state = EditState::Default;
+                    }
 
                 }
                 if (rectangle2.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    std::cout << "End";
-                    state = End;
+                    if (state != EditState::End)
+                    {
+                        state = EditState::End;
+                    }
+                    else
+                    {
+                        state = EditState::Default;
+                    }
                 }
                 if (rectangle3.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    std::cout << "Wall";
                     if (state != EditState::Wall)
                     {
                         state = EditState::Wall;
@@ -175,38 +188,50 @@ int main()
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Compute";
-                    state = EditState::Default;
                 }
                 if (rectangle5.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Refresh";
                     state = EditState::Default;
                 }
-                for (int i = 0; i < squareList.capacity(); i++) {
-                    if (squareList[i].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                    {
-                        //TODO: Check les types des nodes ou des rect jsp comment pour ne pas avoir plusieurs start etc.
-                        if (state == EditState::Start) {
-                            if (pStartSquare != nullptr)
-                            {
-                                pStartSquare->setFillColor(sf::Color::White);
+
+                for (int y = 0; y < squareList.size(); y++) {
+                    for (int x = 0; x < squareList[y].size(); x++) {
+                        if (squareList[y][x].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                        {
+                            //TODO: Refacto in StateMachine.
+                            if (state == EditState::Start) {
+                                if (pStartSquare != nullptr)
+                                {
+                                    pStartSquare->setFillColor(sf::Color::White);
+                                    graph.nodes[y][x]->isWall = false;
+
+                                }
+                                pStartSquare = &squareList[y][x];
+                                squareList[y][x].setFillColor(sf::Color::Green);
+                                graph.nodes[y][x]->isWall = false;
+
+                            }else if (state == EditState::End) {
+                                if (pEndSquare != nullptr)
+                                {
+                                    pEndSquare->setFillColor(sf::Color::White);
+                                    graph.nodes[y][x]->isWall = false;
+
+                                }
+                                pEndSquare = &squareList[y][x];
+                                squareList[y][x].setFillColor(sf::Color::Red);
+                                graph.nodes[y][x]->isWall = false;
+
+                            }else if (state == EditState::Wall) {
+                                squareList[y][x].setFillColor(sf::Color::Yellow);
+                                graph.nodes[y][x]->isWall = true;
                             }
-                            pStartSquare = &squareList[i];
-                            squareList[i].setFillColor(sf::Color::Green);
-                        }else if (state == EditState::End) {
-                            if (pEndSquare != nullptr)
-                            {
-                                pEndSquare->setFillColor(sf::Color::White);
+                            else {
+                                squareList[y][x].setFillColor(sf::Color::White);
+                                graph.nodes[y][x]->isWall = false;
                             }
-                            pEndSquare = &squareList[i];
-                            squareList[i].setFillColor(sf::Color::Red);
-                        }else if (state == EditState::Wall) {
-                            squareList[i].setFillColor(sf::Color::Yellow);
                         }
-                        else {
-                            squareList[i].setFillColor(sf::Color::White);
-                        }
-                    }
+                    } 
                 }
             }
             if (event.type == sf::Event::Closed)
@@ -232,8 +257,10 @@ int main()
         window.draw(refreshText);
         window.draw(stateText);
 
-        for (sf::RectangleShape square : squareList) {
-            window.draw(square);
+        for (int y = 0; y < squareList.size(); y++) {
+            for (int x = 0; x < squareList[y].size(); x++) {
+                window.draw(squareList[y][x]);
+            }
         }
 
 
