@@ -128,12 +128,19 @@ int main()
     //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
     GenerateSquareGrid(window, 20, 20, squareList);
     EditState state = EditState::Default;
+    
+    sf::Text stateText;
+
+    sf::RectangleShape* pStartSquare = nullptr;
+    sf::RectangleShape* pEndSquare = nullptr;
+
     // on fait tourner le programme tant que la fenêtre n'a pas été fermée
     while (window.isOpen())
     {
-        std::cout << state << std::endl;
         // on traite tous les évènements de la fenêtre qui ont été générés depuis la dernière itération de la boucle
         sf::Event event;
+        SetupText(stateText, font, 785, buttonY + 10, editStateName[state], 20, sf::Color::White);
+
         while (window.pollEvent(event))
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -141,6 +148,7 @@ int main()
                 //TODO: Add Input Handler pcq la ouala c'est degeux
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
+
                     std::cout << "Start";
                     state = Start;
 
@@ -153,7 +161,15 @@ int main()
                 if (rectangle3.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Wall";
-                    state = EditState::Wall;
+                    if (state != EditState::Wall)
+                    {
+                        state = EditState::Wall;
+                    }
+                    else
+                    {
+                        state = EditState::Default;
+                    }
+                    
                 }
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
@@ -170,8 +186,18 @@ int main()
                     {
                         //TODO: Check les types des nodes ou des rect jsp comment pour ne pas avoir plusieurs start etc.
                         if (state == EditState::Start) {
+                            if (pStartSquare != nullptr)
+                            {
+                                pStartSquare->setFillColor(sf::Color::White);
+                            }
+                            pStartSquare = &squareList[i];
                             squareList[i].setFillColor(sf::Color::Green);
                         }else if (state == EditState::End) {
+                            if (pEndSquare != nullptr)
+                            {
+                                pEndSquare->setFillColor(sf::Color::White);
+                            }
+                            pEndSquare = &squareList[i];
                             squareList[i].setFillColor(sf::Color::Red);
                         }else if (state == EditState::Wall) {
                             squareList[i].setFillColor(sf::Color::Yellow);
@@ -203,6 +229,7 @@ int main()
         window.draw(wallText);
         window.draw(computeText);
         window.draw(refreshText);
+        window.draw(stateText);
 
         for (sf::RectangleShape square : squareList) {
             window.draw(square);
