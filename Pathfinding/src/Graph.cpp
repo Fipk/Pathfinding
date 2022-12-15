@@ -4,7 +4,6 @@ Graph::Graph(){};
 
 void Graph::AddNode(int x, int y, std::vector<Node*>* nodeList) {
 	Node* node = new Node{ x, y};
-	//nodes[y].push_back(node);
 	nodeList->push_back(node);
 } 
 

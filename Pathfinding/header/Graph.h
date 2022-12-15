@@ -24,7 +24,6 @@ public:
 	void ClearEdge(int x, int y);
 	void AddEdge(int xFrom, int yFrom, int xTo, int yTo);
 
-	//Do it recursivly later
 	~Graph();
 
 	std::vector<std::vector<Node*>> nodes;

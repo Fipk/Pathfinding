@@ -95,7 +95,6 @@ void GenerateEdgesOfGraph(Graph* graph, int colNumber, int rowNumber) {
         }
     }
 
-    std::cout << "Edges Computed " << nbOfWall << "Wall" << std::endl;
 }
 
 int main()
@@ -163,23 +162,17 @@ int main()
     sf::Text checkPointText;
     SetupText(checkPointText, font, 825, buttonY + 10, "Checkpoint", 20, sf::Color::White);
 
-    //std::vector<sf::RectangleShape> squareList;
-
-    Graph graph;
-    
-#pragma endregion Declarations
-
     int colNumber = 50;
     int rowNumber = 50;
+
+    Graph graph;
 
     std::vector<std::vector<sf::RectangleShape>> squareList = GenerateSquareGrid(window, colNumber, rowNumber, &graph);
 
     std::vector<sf::RectangleShape*> wallList;
 
     EditState state = EditState::Default;
-
     Edit* editorState = new DefaultState();
-
     sf::Text stateText;
 
     sf::RectangleShape* pStartSquare = nullptr;
@@ -194,15 +187,17 @@ int main()
     PathFinder pathfinder;
 
     std::vector<Node*> pathToGoal;
-    // on fait tourner le programme tant que la fenêtre n'a pas été fermée
+    
+#pragma endregion Declarations
+
     while (window.isOpen())
     {
-        // on traite tous les évènements de la fenêtre qui ont été générés depuis la dernière itération de la boucle
         sf::Event event;
         SetupText(stateText, font, 945, buttonY + 10, editStateName[state], 20, sf::Color::White);
 
         while (window.pollEvent(event))
-        {
+        {   
+            //Input Handler
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
@@ -253,19 +248,20 @@ int main()
                 }
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    std::cout << "Compute";
-
-                    allPath.clear();
-                    if (!pathToGoal.empty())
-                    {
-                        for (int i = 1; i < pathToGoal.size(); i++)
+                    for(auto pathToClean : allPath){
+                        if (!pathToClean.empty())
                         {
-                            if (squareList[pathToGoal[i]->y][pathToGoal[i]->x].getFillColor() == sf::Color::Blue)
+                            for (int i = 1; i < pathToClean.size(); i++)
                             {
-                                squareList[pathToGoal[i]->y][pathToGoal[i]->x].setFillColor(sf::Color::White);
+                                if (squareList[pathToClean[i]->y][pathToClean[i]->x].getFillColor() == sf::Color::Blue)
+                                {
+                                    squareList[pathToClean[i]->y][pathToClean[i]->x].setFillColor(sf::Color::White);
+                                }
                             }
                         }
                     }
+                    allPath.clear();
+                    
                     
                     GenerateEdgesOfGraph(&graph, colNumber, rowNumber);
                     
@@ -273,7 +269,6 @@ int main()
                     {
                         for (int i = 0; i < allCheckPoints.size(); i++)
                         {
-                            std::cout << "test" << std::endl;
                             if (i == 0)
                                 pathToGoal = pathfinder.AStar(pStartNode, allCheckPoints[i]);
                             else
@@ -304,7 +299,6 @@ int main()
                 }
                 if (rectangle5.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    std::cout << "Refresh";
                     state = EditState::Default;
                     editorState = new DefaultState();
 
@@ -327,7 +321,6 @@ int main()
 
                 if (rectangle6.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    std::cout << "CheckPoint";
                     state = EditState::CheckPoint;
                     editorState = new CheckpointState();
                 }
@@ -336,18 +329,7 @@ int main()
                     for (int x = 0; x < squareList[y].size(); x++) {
                         if (squareList[y][x].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                         {
-
-                        /*if (state == EditState::CheckPoint) {
-                            if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
-                            {
-                                squareList[y][x].setFillColor(sf::Color::Magenta);
-                                Node* checkPoint = graph.nodes[y][x];
-                                allCheckPoints.push_back(checkPoint);
-                            }
-                        }*/
-                        
                         editorState->HandleInput(x, y, pStartSquare, pEndSquare, pStartNode, pEndNode, &graph, squareList, allCheckPoints);
-                        
 
                         /*else {
                             if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
@@ -364,12 +346,9 @@ int main()
                 window.close();
         }
         
-        // effacement de la fenêtre en noir
 
         window.clear(sf::Color::Black);
 
-        // c'est ici qu'on dessine tout
-        // window.draw(...);
         window.draw(sprite);
         window.draw(sprite2);
         window.draw(sprite3);
@@ -391,7 +370,6 @@ int main()
         }
 
 
-        // fin de la frame courante, affichage de tout ce qu'on a dessiné
         window.display();
     }
 
