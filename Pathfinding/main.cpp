@@ -5,7 +5,7 @@
 
 #include "header/Graph.h"
 #include "header/EditState.h"
-#include "main.h"
+
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {

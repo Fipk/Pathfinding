@@ -1,4 +1,5 @@
 #include "../header/PathFinder.h"
+#include <stdlib.h>
 
 PathFinder::PathFinder()
 {
@@ -6,12 +7,13 @@ PathFinder::PathFinder()
 }
 Node* PathFinder::GetLowestScore(std::vector<Node*> openList)
 {
-	Node* lowestScoreNode;
+	Node* lowestScoreNode = new Node();
 	for (int i = 0; i < openList.size();i++)
 	{
-		if (openList[i]->Score < lowestScoreNode->Score)
+		if (openList[i]->distToOrigin + openList[i]->distToTarget < lowestScoreNode->distToOrigin + lowestScoreNode->distToTarget)
 		{
-			lowestScoreNode->Score = openList[i]->Score;
+			lowestScoreNode->distToOrigin = openList[i]->distToOrigin;
+			lowestScoreNode->distToTarget = openList[i]->distToTarget;
 		}
 	}
 	return lowestScoreNode;
@@ -28,18 +30,42 @@ void PathFinder::RemoveNode(std::vector<Node*>& openList,Node* currentLowest)
 	}
 }
 
+bool PathFinder::CheckIsInList(std::vector<Node*> list, Node* toCheck)
+{
+	for (int i = 0; i < list.size(); i++)
+	{
+		if (list[i] == toCheck)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+int PathFinder::GetDistance(Node* nodeA, Node* nodeB)
+{
+	int dstX = abs(nodeA->x - nodeB->x);
+	int dstY = abs(nodeA->y - nodeB->y);
+
+	if (dstX > dstY)
+		return 14 * dstY + 10 * (dstX - dstY);
+	return 14 * dstX + 10 * (dstY - dstX);
+}
+
 void PathFinder::AStar(Node* start, Node* end)
 {
 	openList.push_back(start);
 	while(true)
 	{
-		// TODO: Make a function that iterate each node in openList
 		Node* currentLowest = GetLowestScore(openList);
 		RemoveNode(openList, currentLowest);
-		closeList.push_back(currentLowest); // add in the close list
+		closeList.push_back(currentLowest);
 
-		// TODO: Make a function to check
-		if (currentLowest == end) return; // if current equal to end then path found
+		if (currentLowest == end)
+		{
+			std::cout << "La sortie a été trouvé." << std::endl;
+			return;
+		}
 
 		for (int i = 0; i < currentLowest->neighbors.size();i++)
 		{
@@ -49,13 +75,17 @@ void PathFinder::AStar(Node* start, Node* end)
 			//});
 			//if (it) continue;
 
-			if (currentLowest->neighbors[i]) continue;// TODO:Check is in closed
+			if (CheckIsInList(closeList,currentLowest->neighbors[i]) || currentLowest->neighbors[i]->isWall) continue;
 
-			if (currentLowest->neighbors[i]->Score || currentLowest->neighbors[i]) // check is new path shorter or neighbour is not in openList
+
+			const int newDistToNeighbour = currentLowest->distToOrigin + GetDistance(currentLowest, currentLowest->neighbors[i]);
+			if (newDistToNeighbour < currentLowest->neighbors[i]->distToOrigin || !CheckIsInList(openList,currentLowest->neighbors[i]))
 			{
-				currentLowest->neighbors[i]->Score = 20; // change the score
-				// currentLowest->neighbors[i]->parents = currentLowest;
-				if (currentLowest->neighbors[i]) //check is not in openList
+				currentLowest->neighbors[i]->distToOrigin = newDistToNeighbour;
+				currentLowest->neighbors[i]->distToTarget = GetDistance(currentLowest->neighbors[i], end);
+				currentLowest->neighbors[i]->parent = currentLowest;
+
+				if (!CheckIsInList(openList, currentLowest->neighbors[i])) 
 				{
 					openList.push_back(currentLowest->neighbors[i]);
 				}

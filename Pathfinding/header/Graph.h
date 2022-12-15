@@ -10,7 +10,7 @@ struct Node
     int y;
     bool isWall ;
     Node* parent;
-    int Score;
+    int distToTarget = 0, distToOrigin = 0;
 	std::vector<Node*> neighbors;
 };
 
