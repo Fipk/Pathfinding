@@ -102,7 +102,7 @@ int main()
 #pragma region Declarations
     sf::RenderWindow window(sf::VideoMode(1800, 950), "OUR PROJECT");
     sf::Font font;
-    if (!font.loadFromFile("assets/arial.ttf"))
+    if (!font.loadFromFile("../Pathfinding/assets/arial.ttf"))
     {
         // error...
     }
@@ -110,7 +110,7 @@ int main()
 
     sf::IntRect rectangle(20, buttonY, 120, 50);
     sf::Texture texture;
-    if (!texture.loadFromFile("assets/background.png", rectangle))
+    if (!texture.loadFromFile("../Pathfinding/assets/background.png", rectangle))
     {
         // erreur...
     }
@@ -280,8 +280,7 @@ int main()
                     {
                         pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
                     }
-                    
-                    
+
                     allPath.push_back(pathToGoal);
                     if (!allPath.empty())
                     {
