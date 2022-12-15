@@ -148,17 +148,25 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="src\DefaultState.cpp" />
+    <ClCompile Include="src\EndState.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\PathFinder.cpp" />
+    <ClCompile Include="src\StartState.cpp" />
+    <ClCompile Include="src\WallState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="header\DefaultState.h" />
     <ClInclude Include="header\EditState.h" />
+    <ClInclude Include="header\EndState.h" />
     <ClInclude Include="header\Graph.h" />
     <ClInclude Include="header\PathFinder.h" />
+    <ClInclude Include="header\StartState.h" />
+    <ClInclude Include="header\WallState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

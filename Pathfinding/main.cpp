@@ -7,6 +7,11 @@
 #include "header/EditState.h"
 #include "header/PathFinder.h"
 
+#include "header/DefaultState.h"
+#include "header/StartState.h"
+#include "header/EndState.h"
+#include "header/WallState.h"
+
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
 {
@@ -65,7 +70,6 @@ void GenerateEdgesOfGraph(Graph* graph, int colNumber, int rowNumber) {
 
             if (graph->nodes[y][x]->isWall == false) {
 
-                //INVERSER X ET Y POUR PREND LE NODE COLONNE 3 LIGNE 5 IL FAUT ECRIRE [y = 5][x = 3]
                 if (x > 0 && graph->nodes[y][x - 1]->isWall == false) {
                     graph->AddEdge(x, y, x - 1, y); 
                 }
@@ -111,7 +115,6 @@ int main()
         // erreur...
     }
 
-    //TODO: Refacto button creation
     sf::Sprite sprite;
     sprite.setTexture(texture);
     sprite.setPosition(20, buttonY);
@@ -157,7 +160,6 @@ int main()
     
 #pragma endregion Declarations
 
-    //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
     int colNumber = 50;
     int rowNumber = 50;
 
@@ -166,6 +168,9 @@ int main()
     std::vector<sf::RectangleShape*> wallList;
 
     EditState state = EditState::Default;
+
+    Edit* editorState = new DefaultState();
+
     sf::Text stateText;
 
     sf::RectangleShape* pStartSquare = nullptr;
@@ -188,16 +193,17 @@ int main()
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                //TODO: Add Input Handler pcq la ouala c'est degeux
                 if (rectangle.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
 
                     if (state != EditState::Start)
                     {
+                        editorState = new StartState();
                         state = EditState::Start;
                     }
                     else
                     {
+                        editorState = new DefaultState();
                         state = EditState::Default;
                     }
 
@@ -206,10 +212,14 @@ int main()
                 {
                     if (state != EditState::End)
                     {
+                        editorState = new EndState();
+
                         state = EditState::End;
                     }
                     else
                     {
+                        editorState = new DefaultState();
+
                         state = EditState::Default;
                     }
                 }
@@ -217,10 +227,14 @@ int main()
                 {
                     if (state != EditState::Wall)
                     {
+                        editorState = new WallState();
+
                         state = EditState::Wall;
                     }
                     else
                     {
+                        editorState = new DefaultState();
+
                         state = EditState::Default;
                     }
                     
@@ -253,6 +267,8 @@ int main()
                 {
                     std::cout << "Refresh";
                     state = EditState::Default;
+                    editorState = new DefaultState();
+
                     for (int y = 0; y < squareList.size(); y++) {
                         for (int x = 0; x < squareList[y].size(); x++) {
                         
@@ -273,46 +289,7 @@ int main()
                     for (int x = 0; x < squareList[y].size(); x++) {
                         if (squareList[y][x].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                         {
-                            //TODO: Refacto in StateMachine.
-                            if (state == EditState::Start) {
-                                if (pStartSquare != nullptr)
-                                {
-                                    pStartSquare->setFillColor(sf::Color::White);
-                                    graph.nodes[y][x]->isWall = false;
-
-                                }
-                                pStartSquare = &squareList[y][x];
-                                squareList[y][x].setFillColor(sf::Color::Green);
-                                graph.nodes[y][x]->isWall = false;
-                                pStartNode = graph.nodes[y][x];
-
-                            }else if (state == EditState::End) {
-                                if (pEndSquare != nullptr)
-                                {
-                                    pEndSquare->setFillColor(sf::Color::White);
-                                    graph.nodes[y][x]->isWall = false;
-
-                                }
-                                pEndSquare = &squareList[y][x];
-                                squareList[y][x].setFillColor(sf::Color::Red);
-                                graph.nodes[y][x]->isWall = false;
-                                pEndNode = graph.nodes[y][x];
-
-
-                            }else if (state == EditState::Wall) {
-                                if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
-                                {
-                                    squareList[y][x].setFillColor(sf::Color::Yellow);
-                                    graph.nodes[y][x]->isWall = true;
-                                }
-                            }
-                            else {
-                                if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
-                                {
-                                    squareList[y][x].setFillColor(sf::Color::White);
-                                    graph.nodes[y][x]->isWall = false;
-                                }                            
-                            }
+                            editorState->HandleInput(x, y, pStartSquare, pEndSquare, pStartNode, pEndNode, &graph, squareList);
                         }
                     } 
                 }
@@ -323,7 +300,6 @@ int main()
         
         // effacement de la fenêtre en noir
 
-        //TODO: We don't have to recolor each loop but only on event.
         window.clear(sf::Color::Black);
 
         // c'est ici qu'on dessine tout
