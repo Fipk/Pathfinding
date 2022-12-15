@@ -12,8 +12,7 @@ Node* PathFinder::GetLowestScore(std::vector<Node*> openList)
 	{
 		if (openList[i]->distToOrigin + openList[i]->distToTarget < lowestScoreNode->distToOrigin + lowestScoreNode->distToTarget)
 		{
-			lowestScoreNode->distToOrigin = openList[i]->distToOrigin;
-			lowestScoreNode->distToTarget = openList[i]->distToTarget;
+			lowestScoreNode = openList[i];
 		}
 	}
 	return lowestScoreNode;
@@ -50,6 +49,18 @@ int PathFinder::GetDistance(Node* nodeA, Node* nodeB)
 	if (dstX > dstY)
 		return 14 * dstY + 10 * (dstX - dstY);
 	return 14 * dstX + 10 * (dstY - dstX);
+}
+
+void PathFinder::MakeTracePath(Node* start, Node* end)
+{
+	std::vector<Node*> path;
+	Node* currentNode = end;
+
+	while (currentNode != start) {
+		path.push_back(currentNode);
+		currentNode = currentNode->parent;
+	}
+	std::reverse(path.begin(), path.end());
 }
 
 void PathFinder::AStar(Node* start, Node* end)

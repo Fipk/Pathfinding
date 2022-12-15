@@ -3,9 +3,8 @@
 
 class PathFinder
 {
-	PathFinder();
+
 private:
-	void AStar(Node* start, Node* end);
 
 	Node* GetLowestScore(std::vector<Node*> openList);
 
@@ -14,7 +13,11 @@ private:
 	bool CheckIsInList(std::vector<Node*> list, Node* toCheck);
 
 	int GetDistance(Node* nodeA, Node* nodeB);
+
+	void MakeTracePath(Node* start, Node* end);
 public:
+	PathFinder();
+	void AStar(Node* start, Node* end);
 	std::vector<Node*> openList;
 	std::vector<Node*> closeList;
 };
