@@ -65,8 +65,14 @@ std::vector<Node*> PathFinder::MakeTracePath(Node* start, Node* end)
 
 std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 {
+	std::vector<Node*> emptyNodePath;
 	openList.clear();
 	closeList.clear();
+
+	if (start == nullptr || end == nullptr) {
+		return emptyNodePath;
+	}
+
 	openList.push_back(start);
 	while(!(openList.empty()))
 	{
@@ -100,7 +106,6 @@ std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 			}
 		}
 	}
-	std::vector<Node*> emptyNodePath;
 	return emptyNodePath;
 }
 
