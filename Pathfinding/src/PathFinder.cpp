@@ -24,7 +24,7 @@ void PathFinder::RemoveNode(std::vector<Node*>& openList,Node* currentLowest)
 	{
 		if (openList[i] == currentLowest)
 		{
-			openList.erase((openList.begin()-1) + i);
+			openList.erase(openList.begin() + i);
 		}
 	}
 }
@@ -66,7 +66,7 @@ void PathFinder::MakeTracePath(Node* start, Node* end)
 void PathFinder::AStar(Node* start, Node* end)
 {
 	openList.push_back(start);
-	while(true)
+	while(!(openList.empty()))
 	{
 		Node* currentLowest = GetLowestScore(openList, openList[0]);
 		RemoveNode(openList, currentLowest);
@@ -88,15 +88,16 @@ void PathFinder::AStar(Node* start, Node* end)
 
 			if (CheckIsInList(closeList,currentLowest->neighbors[i]) || currentLowest->neighbors[i]->isWall) continue;
 
-
+			const bool isNotInOpenList = !CheckIsInList(openList, currentLowest->neighbors[i]);
 			const int newDistToNeighbour = currentLowest->distToOrigin + GetDistance(currentLowest, currentLowest->neighbors[i]);
-			if (newDistToNeighbour < currentLowest->neighbors[i]->distToOrigin || !CheckIsInList(openList,currentLowest->neighbors[i]))
+
+			if (newDistToNeighbour < currentLowest->neighbors[i]->distToOrigin || isNotInOpenList)
 			{
 				currentLowest->neighbors[i]->distToOrigin = newDistToNeighbour;
 				currentLowest->neighbors[i]->distToTarget = GetDistance(currentLowest->neighbors[i], end);
 				currentLowest->neighbors[i]->parent = currentLowest;
 
-				if (!CheckIsInList(openList, currentLowest->neighbors[i])) 
+				if (isNotInOpenList) 
 				{
 					openList.push_back(currentLowest->neighbors[i]);
 				}
