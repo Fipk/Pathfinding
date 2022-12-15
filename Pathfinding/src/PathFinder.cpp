@@ -101,5 +101,7 @@ std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 			}
 		}
 	}
+	std::vector<Node*> emptyNodePath;
+	return emptyNodePath;
 }
 

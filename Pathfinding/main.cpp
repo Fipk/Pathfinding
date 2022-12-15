@@ -5,6 +5,7 @@
 
 #include "header/Graph.h"
 #include "header/EditState.h"
+#include "header/PathFinder.h"
 
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
@@ -152,14 +153,13 @@ int main()
 
     //std::vector<sf::RectangleShape> squareList;
 
-
     Graph graph;
     
 #pragma endregion Declarations
 
     //Generation d'une Grid et tous ses élements (TODO: Extract Graph init and filling)
-    int colNumber = 20;
-    int rowNumber = 20;
+    int colNumber = 50;
+    int rowNumber = 50;
 
     std::vector<std::vector<sf::RectangleShape>> squareList = GenerateSquareGrid(window, colNumber, rowNumber, &graph);
 
@@ -171,6 +171,12 @@ int main()
     sf::RectangleShape* pStartSquare = nullptr;
     sf::RectangleShape* pEndSquare = nullptr;
 
+    Node* pStartNode = nullptr;
+    Node* pEndNode = nullptr;
+
+    PathFinder pathfinder;
+
+    std::vector<Node*> pathToGoal;
     // on fait tourner le programme tant que la fenêtre n'a pas été fermée
     while (window.isOpen())
     {
@@ -222,12 +228,45 @@ int main()
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Compute";
+                    if (!pathToGoal.empty())
+                    {
+                        for (int i = 1; i < pathToGoal.size(); i++)
+                        {
+                            if (squareList[pathToGoal[i]->y][pathToGoal[i]->x].getFillColor() == sf::Color::Blue)
+                            {
+                                squareList[pathToGoal[i]->y][pathToGoal[i]->x].setFillColor(sf::Color::White);
+                            }
+                        }
+                    }
+                   
                     GenerateEdgesOfGraph(&graph, colNumber, rowNumber);
+                    pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
+                    if (!pathToGoal.empty())
+                    {
+                        for (int i = 1; i < pathToGoal.size() ; i++)
+                        {
+                            squareList[pathToGoal[i]->y][pathToGoal[i]->x].setFillColor(sf::Color::Blue);
+                        }
+                    }
                 }
                 if (rectangle5.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Refresh";
                     state = EditState::Default;
+                    for (int y = 0; y < squareList.size(); y++) {
+                        for (int x = 0; x < squareList[y].size(); x++) {
+                        
+                            graph.nodes[y][x]->isWall = false;
+                            squareList[y][x].setFillColor(sf::Color::White);
+
+                            pStartNode = nullptr;
+                            pEndNode = nullptr;
+
+                            pStartSquare = nullptr;
+                            pEndSquare = nullptr;
+
+                        }
+                    }
                 }
 
                 for (int y = 0; y < squareList.size(); y++) {
@@ -245,6 +284,7 @@ int main()
                                 pStartSquare = &squareList[y][x];
                                 squareList[y][x].setFillColor(sf::Color::Green);
                                 graph.nodes[y][x]->isWall = false;
+                                pStartNode = graph.nodes[y][x];
 
                             }else if (state == EditState::End) {
                                 if (pEndSquare != nullptr)
@@ -256,14 +296,22 @@ int main()
                                 pEndSquare = &squareList[y][x];
                                 squareList[y][x].setFillColor(sf::Color::Red);
                                 graph.nodes[y][x]->isWall = false;
+                                pEndNode = graph.nodes[y][x];
+
 
                             }else if (state == EditState::Wall) {
-                                squareList[y][x].setFillColor(sf::Color::Yellow);
-                                graph.nodes[y][x]->isWall = true;
+                                if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
+                                {
+                                    squareList[y][x].setFillColor(sf::Color::Yellow);
+                                    graph.nodes[y][x]->isWall = true;
+                                }
                             }
                             else {
-                                squareList[y][x].setFillColor(sf::Color::White);
-                                graph.nodes[y][x]->isWall = false;
+                                if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
+                                {
+                                    squareList[y][x].setFillColor(sf::Color::White);
+                                    graph.nodes[y][x]->isWall = false;
+                                }                            
                             }
                         }
                     } 
