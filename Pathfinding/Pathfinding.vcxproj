@@ -148,6 +148,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="src\CheckpointState.cpp" />
     <ClCompile Include="src\DefaultState.cpp" />
     <ClCompile Include="src\EndState.cpp" />
     <ClCompile Include="src\Graph.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="header\CheckpointState.h" />
     <ClInclude Include="header\DefaultState.h" />
     <ClInclude Include="header\EditState.h" />
     <ClInclude Include="header\EndState.h" />

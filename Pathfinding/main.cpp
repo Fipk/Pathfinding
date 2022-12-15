@@ -11,6 +11,7 @@
 #include "header/StartState.h"
 #include "header/EndState.h"
 #include "header/WallState.h"
+#include "header/CheckpointState.h"
 
 
 void SetupText(sf::Text& startText, sf::Font& font, int x, int y, std::string text, int charSize, sf::Color color)
@@ -328,6 +329,7 @@ int main()
                 {
                     std::cout << "CheckPoint";
                     state = EditState::CheckPoint;
+                    editorState = new CheckpointState();
                 }
 
                 for (int y = 0; y < squareList.size(); y++) {
@@ -335,18 +337,17 @@ int main()
                         if (squareList[y][x].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                         {
 
-                        if (state == EditState::CheckPoint) {
+                        /*if (state == EditState::CheckPoint) {
                             if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
                             {
                                 squareList[y][x].setFillColor(sf::Color::Magenta);
                                 Node* checkPoint = graph.nodes[y][x];
                                 allCheckPoints.push_back(checkPoint);
                             }
-                        }
-                        else
-                        {
-                            editorState->HandleInput(x, y, pStartSquare, pEndSquare, pStartNode, pEndNode, &graph, squareList);
-                        }
+                        }*/
+                        
+                        editorState->HandleInput(x, y, pStartSquare, pEndSquare, pStartNode, pEndNode, &graph, squareList, allCheckPoints);
+                        
 
                         /*else {
                             if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
