@@ -7,11 +7,12 @@ enum EditState
 	Default,
 	Start,
 	End,
-	Wall
+	Wall,
+	CheckPoint
 
 };
 
-static const char* editStateName[] = { "Default", "Start", "End", "Wall"};
+static const char* editStateName[] = { "Default", "Start", "End", "Wall", "CheckPoint"};
 
 class Edit
 {

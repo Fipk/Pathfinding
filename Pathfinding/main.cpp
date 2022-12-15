@@ -139,6 +139,11 @@ int main()
     sprite5.setTexture(texture);
     sprite5.setPosition(660, buttonY);
 
+    sf::IntRect rectangle6(820, buttonY, 120, 50);
+    sf::Sprite sprite6;
+    sprite6.setTexture(texture);
+    sprite6.setPosition(820, buttonY);
+
     sf::Text startText;
     SetupText(startText, font, 60, buttonY + 10, "Start", 20, sf::Color::White);
 
@@ -153,6 +158,9 @@ int main()
 
     sf::Text refreshText;
     SetupText(refreshText, font, 685, buttonY + 10, "Refresh", 20, sf::Color::White);
+
+    sf::Text checkPointText;
+    SetupText(checkPointText, font, 825, buttonY + 10, "Checkpoint", 20, sf::Color::White);
 
     //std::vector<sf::RectangleShape> squareList;
 
@@ -179,6 +187,9 @@ int main()
     Node* pStartNode = nullptr;
     Node* pEndNode = nullptr;
 
+    std::vector<Node*> allCheckPoints;
+    std::vector<std::vector<Node*>> allPath;
+
     PathFinder pathfinder;
 
     std::vector<Node*> pathToGoal;
@@ -187,7 +198,7 @@ int main()
     {
         // on traite tous les évènements de la fenêtre qui ont été générés depuis la dernière itération de la boucle
         sf::Event event;
-        SetupText(stateText, font, 785, buttonY + 10, editStateName[state], 20, sf::Color::White);
+        SetupText(stateText, font, 945, buttonY + 10, editStateName[state], 20, sf::Color::White);
 
         while (window.pollEvent(event))
         {
@@ -242,6 +253,8 @@ int main()
                 if (rectangle4.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     std::cout << "Compute";
+
+                    allPath.clear();
                     if (!pathToGoal.empty())
                     {
                         for (int i = 1; i < pathToGoal.size(); i++)
@@ -252,14 +265,39 @@ int main()
                             }
                         }
                     }
-                   
+                    
                     GenerateEdgesOfGraph(&graph, colNumber, rowNumber);
-                    pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
-                    if (!pathToGoal.empty())
+                    
+                    if (!allCheckPoints.empty())
                     {
-                        for (int i = 1; i < pathToGoal.size() ; i++)
+                        for (int i = 0; i < allCheckPoints.size(); i++)
                         {
-                            squareList[pathToGoal[i]->y][pathToGoal[i]->x].setFillColor(sf::Color::Blue);
+                            std::cout << "test" << std::endl;
+                            if (i == 0)
+                                pathToGoal = pathfinder.AStar(pStartNode, allCheckPoints[i]);
+                            else
+                                pathToGoal = pathfinder.AStar(allCheckPoints[i-1], allCheckPoints[i]);
+                            allPath.push_back(pathToGoal);
+                        }
+                        pathToGoal = pathfinder.AStar(allCheckPoints[allCheckPoints.size() - 1], pEndNode);
+                    } else
+                    {
+                        pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
+                    }
+                    
+                    
+                    allPath.push_back(pathToGoal);
+                    if (!allPath.empty())
+                    {
+                        for (int i = 0; i < allPath.size() ; i++)
+                        {
+                            if (!allPath[i].empty())
+                            {
+                                for (int j = 1; j < allPath[i].size(); j++)
+                                {
+                                    squareList[allPath[i][j]->y][allPath[i][j]->x].setFillColor(sf::Color::Blue);
+                                }
+                            }
                         }
                     }
                 }
@@ -280,16 +318,43 @@ int main()
 
                             pStartSquare = nullptr;
                             pEndSquare = nullptr;
-
+                            allPath.clear();
+                            allCheckPoints.clear();
                         }
                     }
+                }
+
+                if (rectangle6.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    std::cout << "CheckPoint";
+                    state = EditState::CheckPoint;
                 }
 
                 for (int y = 0; y < squareList.size(); y++) {
                     for (int x = 0; x < squareList[y].size(); x++) {
                         if (squareList[y][x].getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                         {
+
+                        if (state == EditState::CheckPoint) {
+                            if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
+                            {
+                                squareList[y][x].setFillColor(sf::Color::Magenta);
+                                Node* checkPoint = graph.nodes[y][x];
+                                allCheckPoints.push_back(checkPoint);
+                            }
+                        }
+                        else
+                        {
                             editorState->HandleInput(x, y, pStartSquare, pEndSquare, pStartNode, pEndNode, &graph, squareList);
+                        }
+
+                        /*else {
+                            if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
+                            {
+                                squareList[y][x].setFillColor(sf::Color::White);
+                                graph.nodes[y][x]->isWall = false;
+                            }
+                        }*/
                         }
                     } 
                 }
@@ -309,11 +374,13 @@ int main()
         window.draw(sprite3);
         window.draw(sprite4);
         window.draw(sprite5);
+        window.draw(sprite6);
         window.draw(startText);
         window.draw(endText);
         window.draw(wallText);
         window.draw(computeText);
         window.draw(refreshText);
+        window.draw(checkPointText);
         window.draw(stateText);
 
         for (int y = 0; y < squareList.size(); y++) {

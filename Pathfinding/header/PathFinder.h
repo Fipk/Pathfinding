@@ -8,7 +8,7 @@ private:
 
 	Node* GetLowestScore(std::vector<Node*> openList, Node* current);
 
-	void RemoveNode(std::vector<Node*>& openList, Node* currentLowest);
+	void RemoveNode(Node* currentLowest);
 
 	bool CheckIsInList(std::vector<Node*> list, Node* toCheck);
 
