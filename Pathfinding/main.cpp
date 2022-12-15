@@ -251,7 +251,7 @@ int main()
                     }
                    
                     GenerateEdgesOfGraph(&graph, colNumber, rowNumber);
-                    /*
+                    
                     if (!allCheckPoints.empty())
                     {
                         for (int i = 0; i < allCheckPoints.size(); i++)
@@ -263,8 +263,13 @@ int main()
                                 pathToGoal = pathfinder.AStar(allCheckPoints[i-1], allCheckPoints[i]);
                             allPath.push_back(pathToGoal);
                         }
-                    }*/
-                    pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
+                        pathToGoal = pathfinder.AStar(allCheckPoints[allCheckPoints.size() - 1], pEndNode);
+                    } else
+                    {
+                        pathToGoal = pathfinder.AStar(pStartNode, pEndNode);
+                    }
+                    
+                    
                     allPath.push_back(pathToGoal);
                     if (!allPath.empty())
                     {
@@ -296,7 +301,7 @@ int main()
                             pStartSquare = nullptr;
                             pEndSquare = nullptr;
                             allPath.clear();
-
+                            allCheckPoints.clear();
                         }
                     }
                 }
@@ -347,9 +352,9 @@ int main()
                             else if (state == EditState::CheckPoint) {
                                 if (pStartNode != graph.nodes[y][x] && pEndNode != graph.nodes[y][x])
                                 {
-                                    //squareList[y][x].setFillColor(sf::Color::Magenta);
-                                    //Node* checkPoint = graph.nodes[y][x];
-                                    //allCheckPoints.push_back(checkPoint);
+                                    squareList[y][x].setFillColor(sf::Color::Magenta);
+                                    Node* checkPoint = graph.nodes[y][x];
+                                    allCheckPoints.push_back(checkPoint);
                                 }
                             }
                             else {
