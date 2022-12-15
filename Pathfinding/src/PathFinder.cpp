@@ -65,6 +65,8 @@ std::vector<Node*> PathFinder::MakeTracePath(Node* start, Node* end)
 
 std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 {
+	openList.clear();
+	closeList.clear();
 	openList.push_back(start);
 	while(!(openList.empty()))
 	{
@@ -80,11 +82,6 @@ std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 
 		for (int i = 0; i < currentLowest->neighbors.size();i++)
 		{
-			//const auto it = std::find_if(closeList.begin(), closeList.end(), [&end](const auto& pNode)
-			//{
-			//	return pNode == 
-			//});
-			//if (it) continue;
 
 			if (CheckIsInList(closeList,currentLowest->neighbors[i]) || currentLowest->neighbors[i]->isWall) continue;
 
