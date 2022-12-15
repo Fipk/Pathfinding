@@ -6,7 +6,7 @@ class PathFinder
 
 private:
 
-	Node* GetLowestScore(std::vector<Node*> openList);
+	Node* GetLowestScore(std::vector<Node*> openList, Node* current);
 
 	void RemoveNode(std::vector<Node*>& openList, Node* currentLowest);
 

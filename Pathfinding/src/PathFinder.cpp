@@ -5,17 +5,17 @@ PathFinder::PathFinder()
 {
 	
 }
-Node* PathFinder::GetLowestScore(std::vector<Node*> openList)
+Node* PathFinder::GetLowestScore(std::vector<Node*> openList, Node* current)
 {
-	Node* lowestScoreNode = new Node();
 	for (int i = 0; i < openList.size();i++)
 	{
-		if (openList[i]->distToOrigin + openList[i]->distToTarget < lowestScoreNode->distToOrigin + lowestScoreNode->distToTarget)
+		if (openList[i]->distToOrigin + openList[i]->distToTarget <= current->distToOrigin + current->distToTarget)
 		{
-			lowestScoreNode = openList[i];
+			if (openList[i]->distToTarget < current->distToTarget)
+				current = openList[i];
 		}
 	}
-	return lowestScoreNode;
+	return current;
 }
 
 void PathFinder::RemoveNode(std::vector<Node*>& openList,Node* currentLowest)
@@ -68,7 +68,7 @@ void PathFinder::AStar(Node* start, Node* end)
 	openList.push_back(start);
 	while(true)
 	{
-		Node* currentLowest = GetLowestScore(openList);
+		Node* currentLowest = GetLowestScore(openList, openList[0]);
 		RemoveNode(openList, currentLowest);
 		closeList.push_back(currentLowest);
 
