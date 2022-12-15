@@ -51,7 +51,7 @@ int PathFinder::GetDistance(Node* nodeA, Node* nodeB)
 	return 14 * dstX + 10 * (dstY - dstX);
 }
 
-void PathFinder::MakeTracePath(Node* start, Node* end)
+std::vector<Node*> PathFinder::MakeTracePath(Node* start, Node* end)
 {
 	std::vector<Node*> path;
 	Node* currentNode = end;
@@ -60,10 +60,10 @@ void PathFinder::MakeTracePath(Node* start, Node* end)
 		path.push_back(currentNode);
 		currentNode = currentNode->parent;
 	}
-	std::reverse(path.begin(), path.end());
+	return path;
 }
 
-void PathFinder::AStar(Node* start, Node* end)
+std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 {
 	openList.push_back(start);
 	while(!(openList.empty()))
@@ -75,7 +75,7 @@ void PathFinder::AStar(Node* start, Node* end)
 		if (currentLowest == end)
 		{
 			std::cout << "La sortie a été trouvé." << std::endl;
-			return;
+			return MakeTracePath(start,end);
 		}
 
 		for (int i = 0; i < currentLowest->neighbors.size();i++)

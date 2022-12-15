@@ -14,10 +14,12 @@ private:
 
 	int GetDistance(Node* nodeA, Node* nodeB);
 
-	void MakeTracePath(Node* start, Node* end);
+	
 public:
 	PathFinder();
-	void AStar(Node* start, Node* end);
+	std::vector<Node*> AStar(Node* start, Node* end);
+	std::vector<Node*> MakeTracePath(Node* start, Node* end);
+
 	std::vector<Node*> openList;
 	std::vector<Node*> closeList;
 };
