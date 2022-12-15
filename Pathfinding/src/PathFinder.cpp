@@ -18,7 +18,7 @@ Node* PathFinder::GetLowestScore(std::vector<Node*> openList, Node* current)
 	return current;
 }
 
-void PathFinder::RemoveNode(std::vector<Node*>& openList,Node* currentLowest)
+void PathFinder::RemoveNode(Node* currentLowest)
 {
 	for (int i = 0; i < openList.size(); i++)
 	{
@@ -71,12 +71,11 @@ std::vector<Node*> PathFinder::AStar(Node* start, Node* end)
 	while(!(openList.empty()))
 	{
 		Node* currentLowest = GetLowestScore(openList, openList[0]);
-		RemoveNode(openList, currentLowest);
+		RemoveNode(currentLowest);
 		closeList.push_back(currentLowest);
 
 		if (currentLowest == end)
 		{
-			std::cout << "La sortie a été trouvé." << std::endl;
 			return MakeTracePath(start,end);
 		}
 
