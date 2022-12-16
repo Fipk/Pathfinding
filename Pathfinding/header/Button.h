@@ -11,19 +11,18 @@ public:
 	using Font = sf::Font;
 	using Color = sf::Color;
 
-	Button(RenderWindow& window, float x, float y);
+	Button(Game& game, const char* text, float x, float y);
 
 	void processInput() override;
-	void update() override;
 	void render() override;
 
-	void SetupText(std::string text, int charSize, sf::Color color);
+	void setupText(const char* text, int charSize, Color color);
 
-private:
+protected:
 	Texture m_texture;
 	Sprite m_sprite;
 	Text m_text;
-	IntRect textRect;
+	IntRect m_textRect;
 	Font m_font;
 };
 

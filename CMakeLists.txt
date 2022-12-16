@@ -25,12 +25,16 @@ add_executable(Pathfinding
         Pathfinding/src/PathFinder.cpp
         Pathfinding/src/StartState.cpp
         Pathfinding/src/WallState.cpp
-        Pathfinding/Button.cpp
-        Pathfinding/Button.h
-        Pathfinding/Game.cpp
-        Pathfinding/Game.h
-        Pathfinding/GameObject.cpp
-        Pathfinding/GameObject.h
+        Pathfinding/src/Button.cpp
+        Pathfinding/header/Button.h
+		Pathfinding/src/ButtonGrid.cpp
+        Pathfinding/header/ButtonGrid.h
+        Pathfinding/src/Game.cpp
+        Pathfinding/header/Game.h
+        Pathfinding/src/GameObject.cpp
+        Pathfinding/header/GameObject.h
+		Pathfinding/src/Grid.cpp
+        Pathfinding/header/Grid.h
         Pathfinding/main.cpp)
 
 set(SFML_ROOT "PATH_TO/SFML-2.5.1")

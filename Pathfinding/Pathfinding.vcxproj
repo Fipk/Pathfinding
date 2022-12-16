@@ -145,28 +145,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\ButtonGrid.cpp" />
     <ClCompile Include="src\CheckpointState.cpp" />
     <ClCompile Include="src\DefaultState.cpp" />
     <ClCompile Include="src\EndState.cpp" />
+	<ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="main.cpp" />
+	<ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\PathFinder.cpp" />
     <ClCompile Include="src\StartState.cpp" />
     <ClCompile Include="src\WallState.cpp" />
     <ClCompile Include="src\TeleportState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="header\Button.h" />
+    <ClInclude Include="header\ButtonGrid.h" />
     <ClInclude Include="header\CheckpointState.h" />
     <ClInclude Include="header\DefaultState.h" />
     <ClInclude Include="header\EditState.h" />
     <ClInclude Include="header\EndState.h" />
+	<ClInclude Include="header\Game.h" />
+    <ClInclude Include="header\GameObject.h" />
     <ClInclude Include="header\Graph.h" />
+	<ClInclude Include="header\Grid.h" />
     <ClInclude Include="header\PathFinder.h" />
     <ClInclude Include="header\StartState.h" />
     <ClInclude Include="header\WallState.h" />
