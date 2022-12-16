@@ -224,8 +224,6 @@ std::vector<std::vector<sf::RectangleShape>> Grid::GenerateSquareGrid(int colNum
 
 void Grid::GenerateEdgesOfGraph(int colNumber, int rowNumber)
 {
-    int nbOfWall = 0;
-
     for (int y = 0; y < rowNumber; y++) {
         for (int x = 0; x < colNumber; x++) {
 
@@ -249,10 +247,6 @@ void Grid::GenerateEdgesOfGraph(int colNumber, int rowNumber)
 
                 }
 
-            }
-            else
-            {
-                nbOfWall++;
             }
         }
     }
