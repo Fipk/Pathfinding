@@ -156,6 +156,7 @@
     <ClCompile Include="src\PathFinder.cpp" />
     <ClCompile Include="src\StartState.cpp" />
     <ClCompile Include="src\WallState.cpp" />
+    <ClCompile Include="src\TeleportState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="header\PathFinder.h" />
     <ClInclude Include="header\StartState.h" />
     <ClInclude Include="header\WallState.h" />
+    <ClInclude Include="header\TeleportState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

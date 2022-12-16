@@ -61,9 +61,6 @@ std::vector<std::vector<sf::RectangleShape>> GenerateSquareGrid(sf::RenderWindow
 }
 
 void GenerateEdgesOfGraph(Graph* graph, int colNumber, int rowNumber) {
-    
-    int nbOfWall = 0;
-
     for (int y = 0; y < rowNumber; y++) {
         for (int x = 0; x < colNumber; x++) {
 
@@ -87,10 +84,6 @@ void GenerateEdgesOfGraph(Graph* graph, int colNumber, int rowNumber) {
 
                 }
 
-            }
-            else
-            {
-                nbOfWall++;
             }
         }
     }
@@ -317,7 +310,6 @@ int main()
                         }
                     }
                 }
-
                 if (rectangle6.contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     state = EditState::CheckPoint;
@@ -340,7 +332,9 @@ int main()
                         }
                     } 
                 }
+
             }
+
             if (event.type == sf::Event::Closed)
                 window.close();
         }
