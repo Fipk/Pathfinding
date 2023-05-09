@@ -4,7 +4,7 @@
 
 Button::Button(Game& game, const char* text, float x, float y) : GameObject(game)
 {
-    m_textRect = IntRect(x, y, 120, 50);
+    m_textRect = IntRect(x, y, 120, 40);
     m_sprite.setTexture(*m_game.getButtonTexture());
     m_sprite.setPosition(x, y);
     setupText(text, 20, Color::White);
